@@ -1,4 +1,4 @@
-﻿"""
+"""
 AI Student Career Analysis Platform — FastAPI Application Entry Point
 
 Starts the application, registers all routers, configures middleware,
@@ -130,13 +130,18 @@ async def health():
     return {"status": "healthy", "version": settings.APP_VERSION, "name": settings.APP_NAME}
 
 
-@app.get("/", tags=["Root"])
-async def root():
-    return {
-        "message": f"Welcome to {settings.APP_NAME}",
-        "docs": "/api/docs",
-        "version": settings.APP_VERSION,
-    }
+# Serve frontend built files if they exist, otherwise serve API welcome JSON
+frontend_dist = Path("frontend/dist")
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+else:
+    @app.get("/", tags=["Root"])
+    async def root():
+        return {
+            "message": f"Welcome to {settings.APP_NAME}",
+            "docs": "/api/docs",
+            "version": settings.APP_VERSION,
+        }
 
 
 # ── Entry Point ───────────────────────────────────────────────────────────────

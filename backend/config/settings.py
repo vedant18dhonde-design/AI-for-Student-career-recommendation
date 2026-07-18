@@ -2,7 +2,7 @@
 
 from functools import lru_cache
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -27,7 +27,12 @@ class Settings(BaseSettings):
 
     # ── MongoDB ──────────────────────────────────────────────────────────────
     MONGODB_URL: str = "mongodb://localhost:27017"
+    MONGODB_URI: Optional[str] = None
     MONGODB_DB_NAME: str = "student_career_db"
+
+    @property
+    def mongodb_connection_string(self) -> str:
+        return self.MONGODB_URI or self.MONGODB_URL
 
     # ── JWT ──────────────────────────────────────────────────────────────────
     JWT_SECRET_KEY: str = "change-this-secret-key-in-production"
@@ -39,7 +44,7 @@ class Settings(BaseSettings):
     PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = 15
 
     # ── CORS ─────────────────────────────────────────────────────────────────
-    ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
 
     @property
     def cors_origins(self) -> List[str]:
